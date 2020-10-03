@@ -1,16 +1,21 @@
 package com.company;
+
 import java.util.*;
 
 public class SocialSecurityNumberValidator<InputData> implements Validatable<String>
 {
     public int priority;
     InputData dataToValidate;
+    // Add static int to track #objects created and the spec. object failed
     private final String validatorName = SocialSecurityNumberValidator.class.getName();
     private boolean isValid;
     private String message;
     SocialSecurityNumberValidator(){this.priority = Integer.MAX_VALUE; }
     SocialSecurityNumberValidator(int p) {this.priority = p;}
-    SocialSecurityNumberValidator(InputData data) {this.dataToValidate = data;}
+    SocialSecurityNumberValidator(InputData data) {
+        this.dataToValidate = data;
+        this.priority = Integer.MAX_VALUE;
+    }
     SocialSecurityNumberValidator(InputData data, int p)
     {
         this.dataToValidate = data;
@@ -18,20 +23,30 @@ public class SocialSecurityNumberValidator<InputData> implements Validatable<Str
     }
 
     @Override
-    public void validate(String data)
+    public boolean validate(String dataInput)
     {
+        String data = sanityStep(dataInput);
+        int length = data.length();
         if (data.length() == 0)
-            throw new NumberFormatException("Empty");
-        if (data.length() < 10)
-            throw new NumberFormatException("Social number cannot be less than 10");
-        if (data.length() == 11 || data.length() > 12)
-            throw new NumberFormatException("Social number cannot have 11 numbers or more than 12 numbers");
+            return setValidationNotifier(dataInput, "Input is empty", false);
+        if(!data.matches("\\d{" + length + "}"))
+            return setValidationNotifier(dataInput, "Social number should contain only numbers", false);
+        if (data.length() != 10)
+            return setValidationNotifier(dataInput, "Social number must have exactly 10 or 12 numbers", false);
 
         // Check that all input are number : -> Social number must be only numbers
-        if( data.length() == 10)
-        {
-            Boolean isValid = isSocialSecurityNumber(data);
-        }
+        if(isSocialSecurityNumber(data))
+            return setValidationNotifier(dataInput, "Valid social security number", true);
+
+        return setValidationNotifier(dataInput, "Data is not a social security number", false);
+    }
+
+    public String sanityStep(String data)
+    {
+        String s = data.replaceAll("[-]", "");
+        if(s.length() == 12)
+            s = s.substring(2);
+        return s;
     }
 
     private boolean isSocialSecurityNumber(String personNumber)
@@ -81,10 +96,26 @@ public class SocialSecurityNumberValidator<InputData> implements Validatable<Str
 
     public int getSum(int[] array) { return Arrays.stream(array).sum(); }
     public int modulo(int numerator, int denominator ) { return numerator % denominator ; }
-    public int getPriority() { return this.priority; }
-    public void setPriority(int p) { this.priority = p; }
-    public InputData getDataToValidate() { return dataToValidate; }
-    public void setDataToValidate(InputData dataToValidate) { this.dataToValidate = dataToValidate; }
+    public String getDataToValidate() { return (String) dataToValidate; }
+    public void setDataToValidate(String dataToValidate) { this.dataToValidate = (InputData) dataToValidate; }
+
+    @Override
+    public int getPriority() { return priority; }
+    @Override
+    public void setPriority(int priority) { this.priority = priority; }
+
+    @Override
+    public boolean setValidationNotifier(String dataToValidate, String msg, boolean validity) {
+        this.dataToValidate = (InputData) dataToValidate;
+        this.message = msg;
+        this.isValid = validity;
+        return validity;
+    }
+
+    @Override
+    public String getValidatorName() {
+        return this.validatorName;
+    }
 
     @Override
     public String toString() {
@@ -96,5 +127,6 @@ public class SocialSecurityNumberValidator<InputData> implements Validatable<Str
                 ", message='" + message + '\'' +
                 '}';
     }
+
 }
 
