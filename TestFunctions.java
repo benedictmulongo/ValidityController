@@ -1,5 +1,3 @@
-package com.company;
-
 import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
@@ -166,14 +164,14 @@ public class TestFunctions
             }
 
             // LAst Step !!!
-           if (!validity)
-           {
-               System.out.println("Failed - Hahahaha");
-               break;
-           }else {
-               System.out.println("Yehehe - Yupi");
-               System.out.println(validator);
-           }
+            if (!validity)
+            {
+                System.out.println("Failed - Hahahaha");
+                break;
+            }else {
+                System.out.println("Yehehe - Yupi");
+                System.out.println(validator);
+            }
 
         }
         //IllegalFormatException
@@ -591,7 +589,11 @@ public class TestFunctions
     {
         String tempNumber = String.valueOf(number);
         int length = tempNumber.length();
-        String base = "1" + "0".repeat(Math.max(0, length - 1));
+        StringBuilder baseStringBuilded = new StringBuilder();
+        baseStringBuilded.append("1");
+        for(int i = 0; i < length - 1; i++)
+            baseStringBuilded.append("0");
+        String base = baseStringBuilded.toString();
         int baseNumber = Integer.parseInt(base);
 
         int div = number / baseNumber;

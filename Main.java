@@ -1,5 +1,3 @@
-package com.company;
-
 import java.util.*;
 import java.io.*;
 
@@ -18,8 +16,16 @@ public class Main {
      */
     public static void main(String[] args) throws FileNotFoundException
     {
+        boolean forward = true;
         String forbiddenWordsPath = "forbidenLetterCombinations.txt";
-        ArrayList<String> stopWords =  getForbiddenWords(forbiddenWordsPath);
+        ArrayList<String> stopWords =  new ArrayList<>();
+        try {
+            stopWords = getForbiddenWords(forbiddenWordsPath); }
+        catch (Exception e) {
+            forward = false;
+            System.out.println("The required file \"forbidenLetterCombinations.txt\" is not in the folder ! ");
+        }
+
 
         // ValidityChecker with single validator
         ValidityChecker validityCheckerNotNull;
@@ -35,14 +41,17 @@ public class Main {
         System.out.println("********************************** WELCOME ************************************");
         Scanner input;
         String nullString = null;
-        NotNullValidator<String> notNullValidator =  new NotNullValidator<>(4);
-
         while(!UserInputData.toLowerCase().equals("stop"))
         {
+            if(!forward)
+            {
+                System.out.println("The required file \"forbidenLetterCombinations.txt\" is not in the folder ! ");
+                break;
+            }
             /*
              Check if UserInputData is non-Null
              */
-            input =  new Scanner(System.in);
+            input =  new Scanner(System.in,  "Cp850");
             System.out.println("Enter a non-Null input : ");
             UserInputData = input.nextLine();
             String isEmpty = UserInputData.length() == 0 ? "empty" : "not empty ";
@@ -53,7 +62,7 @@ public class Main {
             /*
              Check if UserInputData is a Social Security Number
              */
-            input =  new Scanner(System.in);
+            input =  new Scanner(System.in, "Cp850");
             System.out.println("Enter a swedish social security number : ");
             UserInputData = input.nextLine();
             validityChecksPersonNumber = new ArrayList<>(Collections.singletonList(new SocialSecurityNumberValidator<String>(2)));
@@ -63,7 +72,7 @@ public class Main {
             /*
              Check if UserInputData is a Car plate Number
              */
-            input =  new Scanner(System.in);
+            input =  new Scanner(System.in, "Cp850");
             System.out.println("Enter a swedish car number plate : ");
             UserInputData = input.nextLine();
             validityChecksCarNumber = new ArrayList<>(Collections.singletonList(new CarRegistrationNumberValidator<>( 2, stopWords)));
@@ -75,7 +84,7 @@ public class Main {
              */
             System.out.println("Redo a test for [NotNull, SocialSecurityNumber, CarRegistrationNumber]");
             System.out.println("If you want to continue write any word, otherwise write stop !");
-            input = new Scanner(System.in);
+            input = new Scanner(System.in, "Cp850");
             UserInputData = input.nextLine();
         }
         System.out.println("Bye ! See you later for more tests ");

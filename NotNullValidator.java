@@ -1,5 +1,3 @@
-package com.company;
-
 /**
  * NotNullValidator is a class that can be used for validating whether
  * the InputData is null or not.
@@ -18,6 +16,7 @@ public class NotNullValidator<InputData> implements Validatable<InputData>
     private String message;
     NotNullValidator(){this.priority = Integer.MAX_VALUE; }
     NotNullValidator(int p) {this.priority = p;}
+
     NotNullValidator(InputData data) {
         this.dataToValidate = data;
         this.priority = Integer.MAX_VALUE;
@@ -34,11 +33,73 @@ public class NotNullValidator<InputData> implements Validatable<InputData>
      * @param data - data to be evaluate
      * @return boolean - true | false depending of the validity of the data as a swedish social sec. number
      */
+    @Override
     public boolean validate(InputData data)
     {
         if(data == null )
             return setValidationNotifier(data, "The data is null!", false);
         return setValidationNotifier(data, "Data is not null", true);
+    }
+
+
+
+    /**
+     * Set the priority of the validator.
+     * The priority p is used for setting the order by which the validators will be applied to the data
+     * @param p
+     */
+    @Override
+    public void setPriority(int p) { this.priority = p; }
+
+    /**
+     * Return the priority parameter
+     * @return Integer
+     */
+    @Override
+    public int getPriority() { return this.priority; }
+
+    /**
+     * @param dataToValidate - data intended for evaluation
+     */
+    public void setDataToValidate(InputData dataToValidate) { this.dataToValidate = dataToValidate; }
+
+    /**
+     * Return the data used/to be used for validation
+     * @return String
+     */
+    @Override
+    public InputData getDataToValidate() { return dataToValidate; }
+
+
+
+
+    /**
+     * Set important message about the state of the validation.
+     * For example if the validation was successful or the function crashed
+     * @param message - a message for the user caller
+     */
+    @Override
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * Return the message about the state of the validation if applicable
+     * @return message
+     */
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+
+    /**
+     * Implement string describing the correct format of the data required for passing the validation
+     * @return - a string with the correct data format description
+     */
+    @Override
+    public String correctInputFormat() {
+        return "Data should never be Empty ! Retry with a non-empty input";
     }
 
     /**
@@ -56,6 +117,7 @@ public class NotNullValidator<InputData> implements Validatable<InputData>
         return validity;
     }
 
+
     /**
      * Return a unique string name describing for the NotNullValidator.class
      * Useful for logger and debugging
@@ -66,58 +128,6 @@ public class NotNullValidator<InputData> implements Validatable<InputData>
         return this.validatorName;
     }
 
-    /**
-     * Return the priority parameter
-     * @return Integer
-     */
-    public int getPriority() { return this.priority; }
-
-
-    /**
-     * Set the priority of the validator.
-     * The priority p is used for setting the order by which the validators will be applied to the data
-     * @param p
-     */
-    public void setPriority(int p) { this.priority = p; }
-
-    /**
-     * Return the data used/to be used for validation
-     * @return String
-     */
-    public InputData getDataToValidate() { return dataToValidate; }
-
-    /**
-     * @param dataToValidate - data intended for evaluation
-     */
-    public void setDataToValidate(InputData dataToValidate) { this.dataToValidate = dataToValidate; }
-
-    /**
-     * Return the message about the state of the validation if applicable
-     * @return message
-     */
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * Implement string describing the correct format of the data required for passing the validation
-     * @return - a string with the correct data format description
-     */
-    @Override
-    public String correctInputFormat() {
-        return "Data should never be Empty ! Retry with a non-empty input";
-    }
-
-    /**
-     * Set important message about the state of the validation.
-     * For example if the validation was successful or the function crashed
-     * @param message - a message for the user caller
-     */
-    @Override
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     /**
      * Data representation of the class SocialSecurityNumberValidator
@@ -134,5 +144,4 @@ public class NotNullValidator<InputData> implements Validatable<InputData>
                 ", message='" + message + '\'' +
                 '}';
     }
-
 }

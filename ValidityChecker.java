@@ -1,11 +1,8 @@
-package com.company;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import java.util.logging.*;
-
 
 /**
  * This  class ValidityChecker extends ValidatorController.
@@ -51,7 +48,7 @@ public class ValidityChecker extends ValidatorController<Validatable<String>,Str
         ValidityCheckerLogger.addHandler(ch);
 
         try {
-            FileHandler fh = new FileHandler("failedValidationsAndSevereProblems.log");
+            FileHandler fh = new FileHandler("failedValidationsAndSevereProblems.log", true);
             fh.setLevel(Level.WARNING); // Log Severe and Warning messages
             ValidityCheckerLogger.addHandler(fh);
         }

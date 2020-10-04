@@ -1,4 +1,3 @@
-package com.company;
 
 /**
  * The Interface Validate  describes all the essential properties of a validator.
