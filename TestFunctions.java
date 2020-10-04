@@ -1,61 +1,188 @@
 package com.company;
+
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.math.BigInteger;
 import java.lang.Math;
 
+/**
+ * A class containing different tests functions used when developing  and debugging
+ * the project software.
+ * @author Ben Mulongo
+ * @version 1.0
+ * @since 2020-10-04
+ */
 public class TestFunctions
 {
-    static enum ValidationOrder
-    {
-        BYINSERTIONORDER,
-        BYPRIORITYORDER
-    }
-
+    /**
+     * Main methods for testing/debugging different functions and features
+     * @param args
+     * @throws FileNotFoundException
+     */
     public static void main(String[] args) throws FileNotFoundException
     {
+        Tests1();
+        //Tests2();
+        //Tests3();
+        //Tests4();
+        //Tests5();
+        //Tests6();
+        //Tests7();
+        //Tests8();
+    }
 
-        String valData1 = null;
-        String valData2 = "199403110050";
-        String valData3 = "ABC-456";
-        String valData1_false = "null";
-        String valData2_false = "199403110059";
-        String valData3_false = "ABC-45o";
+    /**
+     * Test all the validators
+     * Car number plate, Social number, not null
+     * @throws FileNotFoundException
+     */
+    public static void Tests8() throws FileNotFoundException {
         String forbiddenWordsPath = "forbidenLetterCombinations.txt";
         ArrayList<String> stopWords =  getForbiddenWords(forbiddenWordsPath);
+
+        // ValidityChecker with single validator
+        ValidityChecker validityCheckerNotNull;
+        // ValidityChecker with multiple validators [PersonNumber | CarNumber]
+        ArrayList<Validatable<String>> validityChecksPersonNumber;
+        ValidityChecker validityCheckerPersonNumber;
+        ArrayList<Validatable<String>> validityChecksCarNumber;
+        ValidityChecker validityCheckerCarNumber;
+
+        String UserInputData = "";
+        System.out.println("*###############################################################*");
+        Scanner input;
+        String nullString = null;
+        NotNullValidator<String> notNullValidator =  new NotNullValidator<>(4);
+
+        int  numberOfCorrect;
+        int [] indexNumberOfCorrect;
+        while(!UserInputData.toLowerCase().equals("stop"))
+        {
+            numberOfCorrect = 0;
+            indexNumberOfCorrect = new int [3];
+            input =  new Scanner(System.in);
+            System.out.println("Enter a non-Null input : ");
+            UserInputData = input.nextLine();
+            String isEmpty = UserInputData.length() == 0 ? "empty" : "not empty ";
+
+            // Check if UserInputData is non-Null
+            validityCheckerNotNull = new ValidityChecker(new NotNullValidator<>(1) , UserInputData);
+            validityCheckerNotNull.applyValidators();
+            System.out.println("Data is " + isEmpty);
+            //int hasPassed = validityCheckerNotNull.isPassed() ? 1 : 0;
+            //indexNumberOfCorrect[0] = hasPassed;
+
+            // Check if UserInputData is a Social Security Number
+            input =  new Scanner(System.in);
+            System.out.println("Enter a swedish social security number : ");
+            UserInputData = input.nextLine();
+            validityChecksPersonNumber = new ArrayList<>(Collections.singletonList(new SocialSecurityNumberValidator<String>(2)));
+            validityCheckerPersonNumber = new ValidityChecker(validityChecksPersonNumber, UserInputData);
+            validityCheckerPersonNumber.applyValidators();
+
+            // Check if UserInputData is a Car plate Number
+            input =  new Scanner(System.in);
+            System.out.println("Enter a swedish car number plate : ");
+            UserInputData = input.nextLine();
+            validityChecksCarNumber = new ArrayList<>(Collections.singletonList(new CarRegistrationNumberValidator<>( 2, stopWords)));
+            validityCheckerCarNumber = new ValidityChecker(validityChecksCarNumber, UserInputData);
+            validityCheckerCarNumber.applyValidators();
+
+            System.out.println("Redo a test for [NotNull, SocialSecurityNumber, CarRegistrationNumber]");
+            System.out.println("If you want to continue write any word, otherwise write stop !");
+            input = new Scanner(System.in);
+            UserInputData = input.nextLine();
+        }
+        System.out.println("Bye ! See you later for more tests ");
+
+    }
+
+    /**
+     * Test the properties of class ValidityChecker
+     * @throws FileNotFoundException
+     */
+    public static void Tests7() throws FileNotFoundException {
+        String valData1 = null;
+        String valData2 = "199403110050";
+        String valData3 = "ABc45t";
+        String valData1_false = "null";
+        String valData2_false = "1994v";
+        String valData3_false = "ABC-453";
+        String forbiddenWordsPath = "forbidenLetterCombinations.txt";
+        ArrayList<String> stopWords =  getForbiddenWords(forbiddenWordsPath);
+
+        ArrayList<Validatable<String>> fullTest1 = new ArrayList<>();
+        fullTest1.add(new CarRegistrationNumberValidator<>( 5, stopWords));
+        fullTest1.add(new SocialSecurityNumberValidator<>(2));
+
+        ArrayList<Validatable<String>> validityChecksCarNumber = new ArrayList<>();
+        validityChecksCarNumber.add(new NotNullValidator<>(10));
+        validityChecksCarNumber.add(new CarRegistrationNumberValidator<>( 5, stopWords));
 
         ArrayList<Validatable<String>> validityChecksPersonNumber = new ArrayList<>();
         validityChecksPersonNumber.add(new NotNullValidator<>(4));
         validityChecksPersonNumber.add(new SocialSecurityNumberValidator<>(8));
 
-        ArrayList<Validatable<String>> validityChecksSocialNumber = new ArrayList<>();
-        validityChecksSocialNumber.add(new NotNullValidator<>(10));
-        validityChecksSocialNumber.add(new CarRegistrationNumberValidator<>( 5, stopWords));
-
-        ValidityChecker validityChecker = new ValidityChecker(validityChecksPersonNumber, "199403110050");
-        ValidityChecker v = new ValidityChecker(validityChecksPersonNumber, "199403110050", ValidatorController.ValidationOrder.BYPRIORITYORDER);
-        String bca = null;
-
+        String dataInput = valData3_false;
+        ValidityChecker validityChecker = new ValidityChecker(fullTest1, dataInput);
 
         System.out.println("************************+++++++++++******************************");
-        assert bca != null;
-        System.out.println(" -> " + bca.length());
-
+        validityChecker.applyValidators();
         System.out.println("--------------------------------------------------------------");
     }
 
-    public static ArrayList<String> getForbiddenWords(String path) throws FileNotFoundException {
-        // "forbidenLetterCombinations.txt"
-        Scanner inFile = new Scanner(new File(path));
-        String  forbidenWords = inFile.nextLine().toLowerCase();
-        String[] forbidenLetterCombinations = forbidenWords.split("[,][\\s]|[\\s][,]|[,]|[\\s]");
-        ArrayList<String> stopWords =  new ArrayList<>(Arrays.asList(forbidenLetterCombinations));
-        return stopWords;
+    /**
+     * Test properties of classes implementing Validatable
+     * check the effect of of try-catch and if the validity of each validations can be retrieved
+     * @throws FileNotFoundException
+     */
+    public static void Tests6() throws FileNotFoundException {
+        String valData1 = null;
+        String valData2 = "199403110050";
+        String valData3 = "ABC-456";
+        String valData2_false = "199403110059";
+        String valData3_false = "ABC-45o";
+
+        System.out.println("************************+++++++++++******************************");
+        String forbiddenWordsPath = "forbidenLetterCombinations.txt";
+        ArrayList<String> stopWords =  getForbiddenWords(forbiddenWordsPath);
+
+        ArrayList<Validatable<String>> g = new ArrayList<>();
+        g.add(new NotNullValidator<>(1));
+        g.add(new CarRegistrationNumberValidator<>( 100, stopWords)); // Set forbidden Words
+        g.add(new SocialSecurityNumberValidator<>(2));
+        g.add(new CarRegistrationNumberValidator<>( 10, stopWords)); // Set forbidden Words
+
+        String valData = valData3;
+        System.out.println("Data to be evaluated : " + valData);
+        System.out.println("--------------------------------------------------------------");
+        for (Validatable<String> validator : g) {
+            boolean validity = false;
+            try {
+                validity = validator.validate(valData); // if false Break after this in production  !!!
+            } catch (Exception e) {
+                System.out.println("Fatal error in the input ! " + e.getMessage());
+            }
+
+            // LAst Step !!!
+           if (!validity)
+           {
+               System.out.println("Failed - Hahahaha");
+               break;
+           }else {
+               System.out.println("Yehehe - Yupi");
+               System.out.println(validator);
+           }
+
+        }
+        //IllegalFormatException
+        System.out.println("--------------------------------------------------------------");
     }
 
-
+    /**
+     * Test Validatable and test to apply a set of validators to the data
+     * Test sortOrder property and ValidationOrder.BYINSERTIONORDER
+     */
     public static void Tests5()
     {
         ValidationOrder valOrder1 = ValidationOrder.BYINSERTIONORDER ;
@@ -79,7 +206,7 @@ public class TestFunctions
         // CarRegistrationNumberValidator( int p, ArrayList<String> forbidenWords)
         System.out.println(" + " + g);
         // Sort By priority
-        g.sort(Comparator.comparingInt(Validatable::getPriority));
+        /*g.sort(Comparator.comparingInt(Validatable::getPriority));*/
         System.out.println(" - " + g);
         System.out.println("--------------------------------------------------------------");
 
@@ -92,6 +219,26 @@ public class TestFunctions
         System.out.println("--------------------------------------------------------------");
     }
 
+    /**
+     * Return forbidden words as an ArrayList<String>
+     * @param path  "forbidenLetterCombinations.txt" in the same folder as the TestFunctions.java and other .java files
+     * @return ArrayList<String> all the forbidden words
+     * @throws FileNotFoundException
+     */
+    public static ArrayList<String> getForbiddenWords(String path) throws FileNotFoundException {
+        // "forbidenLetterCombinations.txt"
+        Scanner inFile = new Scanner(new File(path));
+        String  forbidenWords = inFile.nextLine().toLowerCase();
+        String[] forbidenLetterCombinations = forbidenWords.split("[,][\\s]|[\\s][,]|[,]|[\\s]");
+        ArrayList<String> stopWords =  new ArrayList<>(Arrays.asList(forbidenLetterCombinations));
+        return stopWords;
+    }
+
+
+    /**
+     * Test that the correctness of regular expressions for validation Car Plate Number
+     * @throws FileNotFoundException
+     */
     public static void Tests4() throws FileNotFoundException {
         System.out.println("************************+++++++++++******************************");
         String data = "12463665o";
@@ -122,6 +269,12 @@ public class TestFunctions
         }
     }
 
+    /**
+     * Check the validaty of data as a  validation Car Plate Number
+     * @param data  - Data to be evaluated
+     * @param stopWords - forbidden words
+     * @return
+     */
     public static String validateCarRegistration(String data, ArrayList<String> stopWords)
     {
         int length = data.length();
@@ -158,6 +311,12 @@ public class TestFunctions
         return "Problem with data";
     }
 
+    /**
+     * Check Regular expressions for sanityStepCarPlateNumber
+     * @param data
+     * @return
+     * @throws FileNotFoundException
+     */
     public static boolean sanityStepCarPlateNumber(String data) throws FileNotFoundException {
         String pattern1 = "[a-z&&[^äåöiqv]]{3}[[\\s]|[-]]([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])";
         String pattern2 = "[a-z&&[^äåöiqv]]{3}([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])";
@@ -175,6 +334,11 @@ public class TestFunctions
         return (data.matches(pattern1) || data.matches(pattern2) ) && (!stopWords.contains(wordCombination.trim()));
     }
 
+    /**
+     * Validate if a data is a valid car plate number
+     * @param dataInput
+     * @return string
+     */
     public static String validate(String dataInput)
     {
         String data = sanityStep(dataInput);
@@ -195,6 +359,11 @@ public class TestFunctions
         return "STATUS: " + isValid;
     }
 
+    /**
+     * Remove (-) and white space (\\s) from input data
+     * @param data
+     * @return a string without - and/or whit space and of length 10 if the data input length is 12
+     */
     public static String sanityStep(String data)
     {
         String s = data.replaceAll("[-]", "");
@@ -203,6 +372,30 @@ public class TestFunctions
         return s;
     }
 
+    /**
+     *  Implement the algorithm for determining whether a strign represents a valid swedish social sec. number
+     *  The following shows the rules/algorithm for determining the validity of a swedish social sec. number
+     *  let R : Result of precedent operation
+     *  M:multiplication , A : addition, MOD:modulo operation
+     *  S : sum row
+     *  Let Pnr : 197802022389
+     * 19 |    7   |    8   |    0   |    2   |    0   |    2    |    2   |    3   |    8   |   9   |
+     * M  |   *2   |   *1   |   *2   |   *1   |   *2   |   *1    |   *2   |   *1   |   *2   |       |
+     * R  |   14   |   8    |   0    |    2   |    0   |    2    |    4   |    3   |    16  |       |
+     * A  |  1+4   |   8    |   0    |    2   |    0   |    2    |    4   |    3   |   1+6  |       |
+     * R  |   5    |   8    |   0    |    2   |    0   |    2    |    4   |    3   |    7   |       |
+     * S  |   5+   |   8+   |   0+   |    2+  |    0+  |    2+   |    4+  |    3+  |    7   |       |
+     * R  |        |        |        |        |        |         |        |        |   31   |       |
+     * MOD|        |        |        |        |        |         |        |        | mod 10 |       |
+     * R  |        |        |        |        |        |         |        |        |   1    |       |
+     *10-R|        |        |        |        |        |         |        |        |  10-1  |       |
+     * R  |        |        |        |        |        |         |        |        |   9    |       |
+     * MOD|        |        |        |        |        |         |        |        | mod 10 |       |
+     * R  |        |        |        |        |        |         |        |        |   9    |   9   |
+     * Check|      |        |        |        |        |         |        |        |  9==9 -> Valid |
+     * @param personNumber - a string for person number validation
+     * @return True if valid person number false otherwise
+     */
     public static boolean isSocialSecurityNumber(String personNumber)
     {
         String personNumberT = personNumber.substring(0,personNumber.length()-1);
@@ -228,7 +421,11 @@ public class TestFunctions
 
     }
 
-    public static  void Test3()
+    /**
+     * Test the implementation for the social security number validation algorithm
+     * for different formats and input
+     */
+    public static  void Tests3()
     {
         System.out.println("************************+++++++++++******************************");
         String personNumberV1 = "19940311-0050";
@@ -252,6 +449,10 @@ public class TestFunctions
         System.out.println(validate("19820278502022389"));
     }
 
+    /**
+     * Test the implementation for the social security number validation algorithm
+     * for simple format "9204112380"
+     */
     public static void Tests2()
     {
         //String personNumber = "9204112380";
@@ -294,6 +495,10 @@ public class TestFunctions
         System.out.println("***************************************************************");
 
     }
+
+    /**
+     * Test Validatable with the class NotNullValidator
+     */
     public static void Tests1()
     {
         ArrayList<Validatable<String>> g = new ArrayList<>();
@@ -316,6 +521,12 @@ public class TestFunctions
         System.out.println(validator.dataToValidate);
     }
 
+    /**
+     * return  2 or 1 based on the mathematical formula :
+     *  mask = [((-1)^index + 1) / 2 ] + 1 where index is the variable  input
+     * @param index - a integer - not to big as the exponent is computed
+     * @return 2|1 depending of index
+     */
     public static int getMask(int index)
     {
         final int TEMP = -1;
@@ -324,6 +535,12 @@ public class TestFunctions
         return (int) t;
     }
 
+    /**
+     * Splits a number to its individual digits and sum all the digits
+     * Ex. 123 --> [1,2,3]  --> 1 + 2 + 3 --> 6
+     * @param number a integer to be split into indiviual digits
+     * @return integer the sum of individual digits of input number
+     */
     public static int splitInteger(int number)
     {
         String tempNumber = String.valueOf(number);
@@ -345,18 +562,30 @@ public class TestFunctions
         return getSum(array);
     }
 
-
-
+    /**
+     * Sum all the elements in an array s = [a,b,c]
+     * @param array - an integer array
+     * @return integer the sum of the array's elements (a + b + c)
+     */
     public static int getSum(int[] array) {
         return Arrays.stream(array).sum();
     }
+    /**
+     * Return the modulo operation of numerator and denominator
+     * @param numerator
+     * @param denominator
+     * @return integer mod(numerator,denominator )
+     */
 
     public static int modulo(int numerator, int denominator )
     {
         return numerator % denominator ;
     }
 
-
+    /**
+     * LEgacy - similar to splitInteger
+     * @param number
+     */
     public static void splitIntegerBackUp(int number)
     {
         String tempNumber = String.valueOf(number);
