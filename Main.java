@@ -31,7 +31,7 @@ public class Main {
 
         String UserInputData = "";
         System.out.println("********************************** WELCOME ************************************");
-        System.out.println("The file \"forbidenLetterCombinations.txt\" is require ! ");
+        System.out.println("The file \"forbidenLetterCombinations.txt\" is required ! ");
         System.out.println("********************************** WELCOME ************************************");
         Scanner input;
         String nullString = null;

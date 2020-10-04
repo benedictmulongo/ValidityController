@@ -21,7 +21,8 @@ public class TestFunctions
      */
     public static void main(String[] args) throws FileNotFoundException
     {
-        Tests1();
+        System.out.println("************************** WELCOME TO TESTING **************************");
+        //Tests1();
         //Tests2();
         //Tests3();
         //Tests4();

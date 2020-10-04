@@ -50,14 +50,14 @@ public class SocialSecurityNumberValidator<InputData> implements Validatable<Str
         if (dataInput.length() == 0)
             return setValidationNotifier(dataInput, "Input is empty", false);
         if(!data.matches("\\d{" + length + "}")) // Contains letters - regex
-            return setValidationNotifier(dataInput, "Social number should contain only numbers", false);
+            return setValidationNotifier(dataInput, "Social security number should contain only digits", false);
         if (data.length() != 10)
-            return setValidationNotifier(dataInput, "Social number must have exactly 10 or 12 numbers", false);
+            return setValidationNotifier(dataInput, "Social security number must have exactly 10 or 12 digits", false);
 
         if(isSocialSecurityNumber(data))
-            return setValidationNotifier(dataInput, "Valid social security number", true);
+            return setValidationNotifier(dataInput, "Valid social security number !", true);
 
-        return setValidationNotifier(dataInput, "Input is not a valid social security number", false);
+        return setValidationNotifier(dataInput, "Input is not a valid social security number.", false);
     }
 
     /**

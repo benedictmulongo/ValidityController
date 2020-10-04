@@ -155,8 +155,8 @@ public class CarRegistrationNumberValidator<InputData> implements Validatable<St
     public String correctInputFormat() {
         return "The car plate number is composed of : \n" +
                 "3 digits followed by 3 letters or \n" +
-                " 3 digits followed by 2 letter and 1 final letter. \n"  +
-                "Digits and letters may or may not be separate by - ";
+                " 3 digits followed by 2 letters and 1 final letter. \n"  +
+                "Digits and letters may or may not be separate by - or white space";
     }
 
     /**
