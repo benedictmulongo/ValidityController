@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-10-04T09:10:30.519564200Z</date>
+  <millis>1601802630519</millis>
+  <nanos>564200</nanos>
+  <sequence>0</sequence>
+  <logger>Benlog</logger>
+  <level>INFO</level>
+  <class>com.company.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>AAAAAAAAAAAAAAA</message>
+</record>
+<record>
+  <date>2020-10-04T09:10:30.579036200Z</date>
+  <millis>1601802630579</millis>
+  <nanos>36200</nanos>
+  <sequence>1</sequence>
+  <logger>Benlog</logger>
+  <level>SEVERE</level>
+  <class>com.company.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>BBBBBBBBBBBBBBB</message>
+</record>
+<record>
+  <date>2020-10-04T09:10:30.797788100Z</date>
+  <millis>1601802630797</millis>
+  <nanos>788100</nanos>
+  <sequence>2</sequence>
+  <logger>Benlog</logger>
+  <level>SEVERE</level>
+  <class>com.company.Test</class>
+  <method>test</method>
+  <thread>1</thread>
+  <message>I am from TEst ! You are CRAZY</message>
+</record>
+</log>
