@@ -17,6 +17,7 @@ public class ValidityChecker extends ValidatorController<Validatable<String>,Str
     // Set Logger name
     private final static Logger ValidityCheckerLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     //ValidityChecker() { super(); }
+    //TODO IMPROVEMENT ---Add constructors only with validator
     ValidityChecker(Validatable<String> validityChecks, String data)
     {
         super(validityChecks, data);

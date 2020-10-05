@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.*;
 
 /**
  * SocialSecurityNumberValidator is a class that can be used for checking whether
@@ -17,16 +18,16 @@ public class CarRegistrationNumberValidator<InputData> implements Validatable<St
     //private final String validatorName = CarRegistrationNumberValidator.class.getName();
     private boolean isValid;
     private String message;
-    private ArrayList<String> stopWords = null;
+    private List<String> stopWords = null;
     CarRegistrationNumberValidator(){this.priority = Integer.MAX_VALUE; }
 
     CarRegistrationNumberValidator(int p) {this.priority = p;}
-    CarRegistrationNumberValidator(InputData data) {this.dataToValidate = data;}
-    CarRegistrationNumberValidator( ArrayList<String> forbidenWords)
+    CarRegistrationNumberValidator( List<String> forbidenWords)
     {
         this.stopWords = forbidenWords;
         this.priority = Integer.MAX_VALUE;
     }
+    CarRegistrationNumberValidator(InputData data) {this.dataToValidate = data;}
     CarRegistrationNumberValidator( int p, ArrayList<String> forbidenWords){
         this.priority = p;
         this.stopWords = forbidenWords;
@@ -76,7 +77,7 @@ public class CarRegistrationNumberValidator<InputData> implements Validatable<St
         String pattern1 = "[a-z&&[^äåöiqv]]{3}[[\\s]|[-]]([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])";
         String pattern2 = "[a-z&&[^äåöiqv]]{3}([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])";
         String pattenToSplit = "[[\\s]|[-]]([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])|([\\d]{3}|[\\d]{2}[a-z&&[^äåöoiqv]])";
-        String wordCombination = data.replaceAll(pattenToSplit, "").trim();
+        String wordCombination = data.toLowerCase().replaceAll(pattenToSplit, "").trim();
         String [] forbidenLetters = new String[]{"ä", "å", "ö", "i", "q", "v"};
 
         if (data.length() == 0)
@@ -97,10 +98,13 @@ public class CarRegistrationNumberValidator<InputData> implements Validatable<St
         }
         else
         {
-            if((data.matches(pattern1) || data.matches(pattern2) ) && (!stopWords.contains(wordCombination)))
+            boolean match = stopWords.stream().anyMatch(wordCombination::equalsIgnoreCase);
+            //if((data.matches(pattern1) || data.matches(pattern2) ) && (!stopWords.contains(wordCombination)))
+            if((data.matches(pattern1) || data.matches(pattern2) ) && (!match))
                 return setValidationNotifier(data, "Valid plate number", true);
             else
-                return setValidationNotifier(data, "Plate number contains the forbidden word : " + wordCombination, true);
+                return setValidationNotifier(data, "Plate number contains the forbidden word : " + wordCombination, false);
+
         }
 
         return setValidationNotifier(data, "Not a valid car plate number", false);
